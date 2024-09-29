@@ -1,13 +1,14 @@
-//Code a program create Student Management Software in C.
-#include"stdio.h"
-#include"conio.h"
-#include"string.h"
-#include"stdlib.h"
-#include"windows.h"
-#include"unistd.h"
-#include"stdbool.h"
+// Code a program create Student Management Software in C.
+#include "stdio.h"
+#include "conio.h"
+#include "string.h"
+#include "stdlib.h"
+#include "windows.h"
+#include "unistd.h"
+#include "stdbool.h"
 
-struct studentInfo{
+struct studentInfo
+{
     char ID[10];
     char Name[20];
     char Email[30];
@@ -17,12 +18,13 @@ struct studentInfo{
 struct studentInfo students[100];
 
 // Some global variables.
-bool IsRunning= true;
+bool IsRunning = true;
 char stduentID[10];
-int TotalStudents= 0;
+int TotalStudents = 0;
 int i, j;
+bool IsRunningLogin = true;
 
-//Function declaration.
+// Function declaration.
 void Menu();
 void GoBackOrExit();
 void DeleteAllStudents();
@@ -36,134 +38,215 @@ void DeleteStudent(int StudentIndex);
 void AddNewStudent();
 void EditStudent(int StudentFoundIndex);
 
-int main(){
+int main()
+{
     printf("Student Management Software in C.\n\n");
 
     DataSeed();
 
-    while(IsRunning){
-        system("cls");
-        Menu();
-        int option;
-        scanf("%d", &option);
-        switch(option){
-            case 0:{
-                IsRunning = false;
-                ExitProject();
-                break;
-            }
-            case 1:{
-                system("cls");
-                printf("\n\t\t **** Add A New Student ****\n\n");
-                AddNewStudent();
-                GoBackOrExit();
-                break;
-            }
-            case 2:{
-                system("cls");
-                printf("\n\t\t **** All Student ****\n\n");
-                ShowAllStudents();
-                GoBackOrExit();
-                break;
-            }
-            case 3:{
-                system("cls");
-                printf("\n\t\t **** Search students ****\n\n");
-                printf(" Enter The Student ID: ");
-                scanf("%s", stduentID);
-                int isFound= SearchStudent(stduentID);
-                if(isFound < 0){
-                    printf("No Student Found.\n\n");
-                }
-                printf("\n");
-                GoBackOrExit();
-                break;
-            }
-            case 4:{
-                system("cls");
-                printf("\n\t\t **** Edit a Student ****\n\n");
-                printf(" Enter The Student ID: ");
-                scanf("%s", stduentID);
-                int StudentFoundIndex = SearchStudent(stduentID);
-                if(StudentFoundIndex >= 0){
-                    EditStudent(StudentFoundIndex);
-                }
-                else{
-                    printf(" No Student Fount. \n\n");
-                }
-                GoBackOrExit();
-                break;
-            }
-            case 5:{
-                system("cls");
-                printf("\n\t\t **** Delete a Student ****\n\n");
-                printf(" Enter The Student ID: ");
-                scanf("%s", stduentID);
-                
-                int DeleteStudentFoundIndex= SearchStudent(stduentID);
+    // Login password protection code.
+    char login_ID[50];
+    char login_Password[50];
 
-                if(DeleteStudentFoundIndex >= 0){
-                    char Sure= 'N';
-                    getchar();
-                    printf("\n\n");
-                    printf("Are you sure want to delete this student? (Y/N):");
-                    scanf("%c", &Sure);
+logoutLevel:
 
-                    if(Sure == 'Y' || Sure == 'y'){
-                        DeleteStudent(DeleteStudentFoundIndex);
-                    }
-                    else{
-                        printf(" Your Data is Safe.\n\n");
-                        GoBackOrExit();
-                    }
-                }
-                else{
-                    printf(" No Student Found.\n\n");
-                    GoBackOrExit();
-                }
-                break;
-            }
-            case 6:{
-                system("cls");
-                DeleteAllStudents();
-                GoBackOrExit();
-                break;
-            }
-            case 7:{
-                system("cls");
-                break;
-            }
-            case 8:{
-                system("cls");
-                UserGuideline();
-                GoBackOrExit();
-                break;
-            }
-            case 9:{
-                system("cls");
-                AboutUs();
-                GoBackOrExit();
-                break;
-            }
-            case 10:{
-                system("cls");
+    while (IsRunningLogin)
+    {
+        bool loginCheck = false;
+        char u[50], p[50];
+        printf("Enter User Name :- ");
+        scanf("%s", &u);
+        printf("Enter Password :- ");
+        scanf("%s", &p);
 
-                // GoBackOrExit();
-                break;
-            }
-            default :{
-                printf("Invalid Input ...... \n");
-                GoBackOrExit();
-                break;
+        FILE *fptrForLogin = NULL;
+        fptrForLogin = fopen("MyLoginFile.txt", "a+");
+        if (fptrForLogin == NULL)
+        {
+            printf("There is an error while opening the login file.\n");
+        }
+        else
+        {
+            printf("Login file has been created successfully.\n");
+            char loginId[50];
+            char loginPassword[50];
+            while (!feof(fptrForLogin))
+            {
+                fscanf(fptrForLogin, "%s", loginId);
+                fscanf(fptrForLogin, "%s", loginPassword);
+                if ((strcmp(u, loginId) == 0) && (strcmp(p, loginPassword) == 0))
+                {
+                    loginCheck = true;
+                    strcpy(login_ID, loginId);
+                    strcpy(login_Password, loginPassword);
+                    break;
+                }
             }
         }
-    }
+        fclose(fptrForLogin);
 
-    
-    return(0);
+        if (loginCheck)
+        {
+
+            while (IsRunning)
+            {
+                system("cls");
+                Menu();
+                int option;
+                scanf("%d", &option);
+                switch (option)
+                {
+                case 0:
+                {
+                    IsRunning = false;
+                    ExitProject();
+                    break;
+                }
+                case 1:
+                {
+                    system("cls");
+                    printf("\n\t\t **** Add A New Student ****\n\n");
+                    AddNewStudent();
+                    GoBackOrExit();
+                    break;
+                }
+                case 2:
+                {
+                    system("cls");
+                    printf("\n\t\t **** All Student ****\n\n");
+                    ShowAllStudents();
+                    GoBackOrExit();
+                    break;
+                }
+                case 3:
+                {
+                    system("cls");
+                    printf("\n\t\t **** Search students ****\n\n");
+                    printf(" Enter The Student ID: ");
+                    scanf("%s", stduentID);
+                    int isFound = SearchStudent(stduentID);
+                    if (isFound < 0)
+                    {
+                        printf("No Student Found.\n\n");
+                    }
+                    printf("\n");
+                    GoBackOrExit();
+                    break;
+                }
+                case 4:
+                {
+                    system("cls");
+                    printf("\n\t\t **** Edit a Student ****\n\n");
+                    printf(" Enter The Student ID: ");
+                    scanf("%s", stduentID);
+                    int StudentFoundIndex = SearchStudent(stduentID);
+                    if (StudentFoundIndex >= 0)
+                    {
+                        EditStudent(StudentFoundIndex);
+                    }
+                    else
+                    {
+                        printf(" No Student Fount. \n\n");
+                    }
+                    GoBackOrExit();
+                    break;
+                }
+                case 5:
+                {
+                    system("cls");
+                    printf("\n\t\t **** Delete a Student ****\n\n");
+                    printf(" Enter The Student ID: ");
+                    scanf("%s", stduentID);
+
+                    int DeleteStudentFoundIndex = SearchStudent(stduentID);
+
+                    if (DeleteStudentFoundIndex >= 0)
+                    {
+                        char Sure = 'N';
+                        getchar();
+                        printf("\n\n");
+                        printf("Are you sure want to delete this student? (Y/N):");
+                        scanf("%c", &Sure);
+
+                        if (Sure == 'Y' || Sure == 'y')
+                        {
+                            DeleteStudent(DeleteStudentFoundIndex);
+                        }
+                        else
+                        {
+                            printf(" Your Data is Safe.\n\n");
+                            GoBackOrExit();
+                        }
+                    }
+                    else
+                    {
+                        printf(" No Student Found.\n\n");
+                        GoBackOrExit();
+                    }
+                    break;
+                }
+                case 6:
+                {
+                    system("cls");
+                    DeleteAllStudents();
+                    GoBackOrExit();
+                    break;
+                }
+                case 7:
+                {
+                    system("cls");
+                    break;
+                }
+                case 8:
+                {
+                    system("cls");
+                    UserGuideline();
+                    GoBackOrExit();
+                    break;
+                }
+                case 9:
+                {
+                    system("cls");
+                    AboutUs();
+                    GoBackOrExit();
+                    break;
+                }
+                case 10:
+                {
+                    system("cls");
+                    char logoutText[] = "*** Logout Successfully for UserID : ";
+                    for (int i = 0; i < strlen(logoutText); i++)
+                    {
+                        printf("%c", logoutText[i]);
+                        Sleep(30);
+                    }
+                    printf("%s ***\n\n", login_ID);
+                    GoBackOrExit();
+                    goto logoutLevel;
+                    break;
+                }
+                default:
+                {
+                    printf("Invalid Input ...... \n");
+                    GoBackOrExit();
+                    break;
+                }
+                }
+            }
+        }
+        else
+        {
+            system("cls");
+            printf("Invalid User Name and Password.\n");
+            printf("       Please try again...     \n");
+            GoBackOrExit();
+        }
+    }
+    return (0);
 }
 
-void Menu(){
+void Menu()
+{
     system("cls");
     printf("\n\n\t *** Student Management System using C. ***\n\n");
     printf("\t\t MAIN MENU\n");
@@ -183,66 +266,76 @@ void Menu(){
     printf("\t\t=== Total Student : %d ==\n", TotalStudents);
     printf("\t\t====================================\n");
     printf("\t\tEnter The Choice : ");
-    
 }
 
-void GoBackOrExit(){
+void GoBackOrExit()
+{
     getchar();
     char option;
     printf(" Go back(b)? or Exit(0)?: ");
     scanf("%c", &option);
-    if(option == '0'){
+    if (option == '0')
+    {
         ExitProject();
     }
-    else{
+    else
+    {
         system("cls");
     }
 }
 
-void DeleteAllStudents(){
-    TotalStudents= 0;
+void DeleteAllStudents()
+{
+    TotalStudents = 0;
     printf(" All Students Deleted Successfully.\n\n");
     GoBackOrExit();
 }
 
-void ShowAllStudents(){
+void ShowAllStudents()
+{
     printf("|==========|====================|==============================|====================|\n");
     printf("|    ID    |        Name        |            Email             |       Phone        |\n");
     printf("|==========|====================|==============================|====================|\n");
-    for(i= 0; i< TotalStudents; i++){
+    for (i = 0; i < TotalStudents; i++)
+    {
         printf("|");
         printf("%s", students[i].ID);
-        for(j= 0; j< (10- strlen(students[i].ID)); j++){
+        for (j = 0; j < (10 - strlen(students[i].ID)); j++)
+        {
             printf(" ");
         }
         printf("|");
         printf("%s", students[i].Name);
-        for(j= 0; j< (20- strlen(students[i].Name)); j++){
+        for (j = 0; j < (20 - strlen(students[i].Name)); j++)
+        {
             printf(" ");
         }
         printf("|");
         printf("%s", students[i].Email);
-        for(j= 0; j< (30- strlen(students[i].Email)); j++){
+        for (j = 0; j < (30 - strlen(students[i].Email)); j++)
+        {
             printf(" ");
         }
         printf("|");
         printf("%s", students[i].Phone);
-        for(j= 0; j< (20- strlen(students[i].Phone)); j++){
+        for (j = 0; j < (20 - strlen(students[i].Phone)); j++)
+        {
             printf(" ");
         }
-    printf("|\n");
+        printf("|\n");
         printf("|----------|--------------------|------------------------------|--------------------|\n");
     }
     printf("\n");
 }
 
-void DataSeed(){
+void DataSeed()
+{
     // store some dummy student data for testing purpose.
     strcpy(students[0].ID, "St1");
     strcpy(students[0].Name, "Student1");
     strcpy(students[0].Phone, "1110001100");
     strcpy(students[0].Email, "studnet1@gmail.com");
-    
+
     strcpy(students[1].ID, "St2");
     strcpy(students[1].Name, "Student2");
     strcpy(students[1].Phone, "1110001102");
@@ -263,27 +356,30 @@ void DataSeed(){
     strcpy(students[4].Phone, "1110001105");
     strcpy(students[4].Email, "studnet5@gmail.com");
 
-    TotalStudents= 5;
-
+    TotalStudents = 5;
 }
 
-void ExitProject(){
+void ExitProject()
+{
     system("cls");
     int i;
-    char ThankYou[100]= " === Thank You Exploring My Software. ===\n";
-    char SeeYouSoon[100]= " ============= See You Soon. ============\n";
-    for(i= 0; i< strlen(ThankYou); i++){
+    char ThankYou[100] = " === Thank You Exploring My Software. ===\n";
+    char SeeYouSoon[100] = " ============= See You Soon. ============\n";
+    for (i = 0; i < strlen(ThankYou); i++)
+    {
         printf("%c", ThankYou[i]);
         Sleep(35);
     }
-    for(i= 0; i< strlen(SeeYouSoon); i++){
+    for (i = 0; i < strlen(SeeYouSoon); i++)
+    {
         printf("%c", SeeYouSoon[i]);
         Sleep(35);
     }
     exit(0);
 }
 
-void UserGuideline(){
+void UserGuideline()
+{
     printf("\n\t\t **** How it works? ****\n\n");
     printf(" -> You will only able to store the sudent's ID, Name, Email, Phone number.\n");
     printf(" -> A student can have maximum 4 courses and minimum 1 mourse.\n");
@@ -293,7 +389,8 @@ void UserGuideline(){
     printf(" ->> Visti https://sites.google.com/view/codingwill/home for more project like this. <<-\n\n");
 }
 
-void AboutUs(){
+void AboutUs()
+{
     printf("\n\t\t **** About Us? ****\n\n");
     printf(" Some important note we should remember.\n");
     printf(" -> This is a simple student record management system project.\n");
@@ -302,13 +399,16 @@ void AboutUs(){
     printf(" ->> Visti https://sites.google.com/view/codingwill/home for more project like this. <<-\n\n");
 }
 
-int SearchStudent(char studentID[10]){
+int SearchStudent(char studentID[10])
+{
     system("cls");
-    int studentFoundIndex= -1;
+    int studentFoundIndex = -1;
     int i;
-    for(i= 0; i< TotalStudents; i++){
-        if(strcmp(studentID, students[i].ID)== 0){
-            studentFoundIndex= i;
+    for (i = 0; i < TotalStudents; i++)
+    {
+        if (strcmp(studentID, students[i].ID) == 0)
+        {
+            studentFoundIndex = i;
             printf("\n One Student Found For ID: %s\n\n", stduentID);
             printf(" Student Information\n");
             printf("------------------------------\n");
@@ -322,10 +422,13 @@ int SearchStudent(char studentID[10]){
     return studentFoundIndex;
 }
 
-void DeleteStudent(int StudentIndex){
-    for(int i= 0; i< TotalStudents; i++){
-        if(i >= StudentIndex){
-            students[i]= students[i+1];
+void DeleteStudent(int StudentIndex)
+{
+    for (int i = 0; i < TotalStudents; i++)
+    {
+        if (i >= StudentIndex)
+        {
+            students[i] = students[i + 1];
         }
     }
     TotalStudents--;
@@ -333,38 +436,43 @@ void DeleteStudent(int StudentIndex){
     GoBackOrExit();
 }
 
-void AddNewStudent(){
+void AddNewStudent()
+{
     char StudentID[300];
     char Name[300];
     char Phone[300];
     char Email[300];
 
-    int IsValidID= 0;
-    while(!IsValidID){
+    int IsValidID = 0;
+    while (!IsValidID)
+    {
         printf(" Enter The ID: ");
         scanf("%s", &StudentID);
-        IsValidID= 1;
+        IsValidID = 1;
     }
 
-    int IsValidName= 0;
-    while(!IsValidName){
+    int IsValidName = 0;
+    while (!IsValidName)
+    {
         printf(" Enter The Name: ");
         scanf("%s", &Name);
-        IsValidName= 1;
+        IsValidName = 1;
     }
 
-    int IsValidPhone= 0;
-    while(!IsValidPhone){
+    int IsValidPhone = 0;
+    while (!IsValidPhone)
+    {
         printf(" Enter The Phone No: ");
         scanf("%s", &Phone);
-        IsValidPhone= 1;
+        IsValidPhone = 1;
     }
 
-    int IsValidEmail= 0;
-    while(!IsValidEmail){
+    int IsValidEmail = 0;
+    while (!IsValidEmail)
+    {
         printf(" Enter The Email: ");
         scanf("%s", &Email);
-        IsValidEmail= 1;
+        IsValidEmail = 1;
     }
 
     strcpy(students[TotalStudents].ID, StudentID);
@@ -376,7 +484,8 @@ void AddNewStudent(){
     printf("\n Student Added Successfully.\n\n");
 }
 
-void EditStudent(int StudentFoundIndex){
+void EditStudent(int StudentFoundIndex)
+{
     printf("\n\t\t **** Update The Student ****\n\n");
 
     char StudentID[300];
@@ -385,34 +494,40 @@ void EditStudent(int StudentFoundIndex){
     char NewEmail[300];
     strcpy(StudentID, students[StudentFoundIndex].ID);
 
-    int IsValidName= 0;
-    while(!IsValidName){
+    int IsValidName = 0;
+    while (!IsValidName)
+    {
         printf(" Enter The New Name(0 for skip): ");
         scanf("%s", &NewName);
-        IsValidName= 1;
+        IsValidName = 1;
     }
 
-    int IsValidPhone= 0;
-    while(!IsValidPhone){
+    int IsValidPhone = 0;
+    while (!IsValidPhone)
+    {
         printf(" Enter The New Phone No(0 for skip): ");
         scanf("%s", &NewPhone);
-        IsValidPhone= 1;
+        IsValidPhone = 1;
     }
 
-    int IsValidEmail= 0;
-    while(!IsValidEmail){
+    int IsValidEmail = 0;
+    while (!IsValidEmail)
+    {
         printf(" Enter The New Email(0 for skip): ");
         scanf("%s", &NewEmail);
-        IsValidEmail= 1;
+        IsValidEmail = 1;
     }
 
-    if(strcmp(NewName, "0") != 0){
+    if (strcmp(NewName, "0") != 0)
+    {
         strcpy(students[StudentFoundIndex].Name, NewName);
     }
-    if(strcmp(NewPhone, "0") != 0){
+    if (strcmp(NewPhone, "0") != 0)
+    {
         strcpy(students[StudentFoundIndex].Phone, NewPhone);
     }
-    if(strcmp(NewEmail, "0") != 0){
+    if (strcmp(NewEmail, "0") != 0)
+    {
         strcpy(students[StudentFoundIndex].Email, NewEmail);
     }
     printf("\n Student Updated Successfully.\n\n");
