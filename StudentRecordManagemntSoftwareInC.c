@@ -33,6 +33,8 @@ void UserGuideline();
 void AboutUs();
 int SearchStudent(char studentID[10]);
 void DeleteStudent(int StudentIndex);
+void AddNewStudent();
+void EditStudent(int StudentFoundIndex);
 
 int main(){
     printf("Student Management Software in C.\n\n");
@@ -53,8 +55,8 @@ int main(){
             case 1:{
                 system("cls");
                 printf("\n\t\t **** Add A New Student ****\n\n");
-                // AddNewStudent();
-                // GoBackOrExit();
+                AddNewStudent();
+                GoBackOrExit();
                 break;
             }
             case 2:{
@@ -79,8 +81,17 @@ int main(){
             }
             case 4:{
                 system("cls");
-                
-                // GoBackOrExit();
+                printf("\n\t\t **** Edit a Student ****\n\n");
+                printf(" Enter The Student ID: ");
+                scanf("%s", stduentID);
+                int StudentFoundIndex = SearchStudent(stduentID);
+                if(StudentFoundIndex >= 0){
+                    EditStudent(StudentFoundIndex);
+                }
+                else{
+                    printf(" No Student Fount. \n\n");
+                }
+                GoBackOrExit();
                 break;
             }
             case 5:{
@@ -320,4 +331,89 @@ void DeleteStudent(int StudentIndex){
     TotalStudents--;
     printf(" Student Deleted Successfully.\n\n");
     GoBackOrExit();
+}
+
+void AddNewStudent(){
+    char StudentID[300];
+    char Name[300];
+    char Phone[300];
+    char Email[300];
+
+    int IsValidID= 0;
+    while(!IsValidID){
+        printf(" Enter The ID: ");
+        scanf("%s", &StudentID);
+        IsValidID= 1;
+    }
+
+    int IsValidName= 0;
+    while(!IsValidName){
+        printf(" Enter The Name: ");
+        scanf("%s", &Name);
+        IsValidName= 1;
+    }
+
+    int IsValidPhone= 0;
+    while(!IsValidPhone){
+        printf(" Enter The Phone No: ");
+        scanf("%s", &Phone);
+        IsValidPhone= 1;
+    }
+
+    int IsValidEmail= 0;
+    while(!IsValidEmail){
+        printf(" Enter The Email: ");
+        scanf("%s", &Email);
+        IsValidEmail= 1;
+    }
+
+    strcpy(students[TotalStudents].ID, StudentID);
+    strcpy(students[TotalStudents].Name, Name);
+    strcpy(students[TotalStudents].Phone, Phone);
+    strcpy(students[TotalStudents].Email, Email);
+    TotalStudents++;
+
+    printf("\n Student Added Successfully.\n\n");
+}
+
+void EditStudent(int StudentFoundIndex){
+    printf("\n\t\t **** Update The Student ****\n\n");
+
+    char StudentID[300];
+    char NewName[300];
+    char NewPhone[300];
+    char NewEmail[300];
+    strcpy(StudentID, students[StudentFoundIndex].ID);
+
+    int IsValidName= 0;
+    while(!IsValidName){
+        printf(" Enter The New Name(0 for skip): ");
+        scanf("%s", &NewName);
+        IsValidName= 1;
+    }
+
+    int IsValidPhone= 0;
+    while(!IsValidPhone){
+        printf(" Enter The New Phone No(0 for skip): ");
+        scanf("%s", &NewPhone);
+        IsValidPhone= 1;
+    }
+
+    int IsValidEmail= 0;
+    while(!IsValidEmail){
+        printf(" Enter The New Email(0 for skip): ");
+        scanf("%s", &NewEmail);
+        IsValidEmail= 1;
+    }
+
+    if(strcmp(NewName, "0") != 0){
+        strcpy(students[StudentFoundIndex].Name, NewName);
+    }
+    if(strcmp(NewPhone, "0") != 0){
+        strcpy(students[StudentFoundIndex].Phone, NewPhone);
+    }
+    if(strcmp(NewEmail, "0") != 0){
+        strcpy(students[StudentFoundIndex].Email, NewEmail);
+    }
+    printf("\n Student Updated Successfully.\n\n");
 }
